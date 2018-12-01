@@ -1,17 +1,16 @@
 /**
- *    TP5 de Réseaux : Programmation d'une application client/serveur
+ *    TP de Réseau : Programmation d'une application client/serveur
  *    ---------------------------------------------------------------
  * 
- *		Application : Jeu du pendu 
- *    fichier : serveur.c				     
+ *		Application : FTP client 
+ *    fichier : client.c				     
  *					      
  *		Auteurs :  Damien Wykland, Baptiste Bouvier et Ancelin Serre						      
- *		Date : 13 Avril 2018 
+ *		Date : 21 Novembre 2018 
  *									      
  */
 
 #include <stdio.h>
-#include <curses.h>
 #include <string.h>
 #include <time.h>
 #include <sys/signal.h>
@@ -24,11 +23,7 @@
 
 void serveur_appli(char *service); /* programme serveur */
 
-void startServeur(int sock_id); /* boucle de jeu */
-
-char playRound(char* mot_temp, char* mot_juste,char lettre);
-
-int victoire(char* mot_temp, int taille_mot);
+void startServeur(int sock_id); /* boucle du serveur*/
 
 /*---------- programme serveur ----------*/
 
@@ -64,7 +59,6 @@ int main(int argc, char *argv[])
  */
 void serveur_appli(char *service)
 {
-	char diff;
 
 	/* Création de la socket d'écoute */
 	struct sockaddr_in *p_adr_cli;
@@ -115,7 +109,6 @@ void startServeur(int sock_cli)
 
   memset(commande, 0, 128);
   memset(resultat, 0, 1024);
-  memset(buffer_temp, 0, 1024);
 
   /* Lecture commande */
   reception(sock_cli, commande, 128);

@@ -94,7 +94,7 @@ void client_appli(char *serveur, char *service)
 }
 
 /**
- * Boucle de jeu côté client
+ * côté client
  * @param int le descripteur d'une socket utilisée par le client
  * pour l'échange de données avec le processus serveur
  * @return void
@@ -124,9 +124,6 @@ void startClient(int sock_id)
     read(sock_id, resultat, 1024);
     printf("%s\n", resultat);
     fflush(stdout);
-    while(1) {
-
-    }
 
   }else if(strcmp(commande,"put") == 0) {
     printf("%s\n", commande);
@@ -139,18 +136,4 @@ void startClient(int sock_id)
   }
 
   free(commande);
-}
-
-/** 
- * Lit un caractère sur l'entrée standard
- * @return char, le caractère lu 
- */
-char lireChar()
-{
-  char c = 0;
-  c = getchar();
-  c = toupper(c);
-  while (getchar() != '\n')
-    ;
-  return c;
 }

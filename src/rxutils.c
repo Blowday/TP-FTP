@@ -9,6 +9,7 @@
 
 #include "rxutils.h"
 
+/* Remplit la structure avec le port et l'adresse IP */
 void remp_socket(char *service, char *nom, int typesock,
                  struct sockaddr_in **p_adr_serv)
 {
@@ -41,6 +42,7 @@ void remp_socket(char *service, char *nom, int typesock,
   *p_adr_serv = (struct sockaddr_in *)res->ai_addr;
 }
 
+/* Fonction d'envoi du buffer de taille 'taille' à la socket spécifiée */
 int envoi(int socket, char *buffer, int taille)
 {
   /* Nombre restant et nombre écrit d'octets*/
@@ -70,7 +72,7 @@ int envoi(int socket, char *buffer, int taille)
   return (taille - nb_restant);
 }
 
-
+/* Fonction de réception du buffer de taille 'taille' à partir de la socket spécifiée */
 int reception( int socket, char *buffer, int taille)
 {
   /* nombre restant et lus d'octets */
