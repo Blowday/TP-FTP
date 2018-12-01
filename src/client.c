@@ -104,9 +104,11 @@ void startClient(int sock_id)
   /* Variables */
   char *commande = malloc(128);
   char *resultat = malloc(1024);
+  char *filename = malloc(128);
  
   memset(commande, 0, 128);
   memset(resultat, 0, 1024);
+  memset(filename, 0, 128);
 
   /* Demande et envoi de la difficulté (nombre de vie) */
   printf("\nBonjour, veuillez saisir votre commande : ");
@@ -114,19 +116,32 @@ void startClient(int sock_id)
 
 
   if(strcmp(commande,"ls") == 0) {
-    int size = strlen(commande);
 
     //envoi de la commande
     if (write(sock_id, commande, 128) < 0)
     {
-        printf("Echec de l'envoie de la commande \n");
+        printf("Echec de l'envoi de la commande \n");
     }
     read(sock_id, resultat, 1024);
     printf("%s\n", resultat);
     fflush(stdout);
 
   }else if(strcmp(commande,"put") == 0) {
-    printf("%s\n", commande);
+    scanf("%s", filename); // filename = nom du fichier à récupérer depuis le serveur
+    printf("%s\n", filename);
+
+    //envoi de la commande
+    if (write(sock_id, commande, 128) < 0)
+    {
+        printf("Echec de l'envoi de la commande \n");
+    }
+
+    //envoi du nom du fichier
+    if (write(sock_id,filename, 128) < 0)
+    {
+        printf("Echec de l'envoi du nom du fichier \n");
+    }
+
   }else if(strcmp(commande,"get") == 0) {
     printf("%s\n", commande);
   }else if(strcmp(commande,"quit") == 0) {

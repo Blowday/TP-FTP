@@ -105,7 +105,7 @@ void startServeur(int sock_cli)
   /* Variables */
   char* commande = malloc(128);
   char* resultat = malloc(1024);
-  char* buffer_temp = malloc(1024);
+  char* filename = malloc(128);
 
   memset(commande, 0, 128);
   memset(resultat, 0, 1024);
@@ -127,7 +127,9 @@ void startServeur(int sock_cli)
     envoi(sock_cli, resultat, 1024);
 
   }else if(strcmp(commande,"put") == 0) {
-    printf("%s\n", commande);
+    /* Lecture nom du fichier à envoyer */
+    reception(sock_cli, filename, 128);
+    printf("%s\n", filename);
   }else if(strcmp(commande,"get") == 0) {
     printf("%s\n", commande);
   }else if(strcmp(commande,"quit") == 0) {
