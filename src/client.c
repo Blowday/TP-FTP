@@ -15,7 +15,10 @@
 #include <sys/signal.h>
 #include <sys/wait.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 #include <ctype.h>
+#include <sys/types.h>
+#include <fcntl.h>
 
 #include "rxutils.h" /* nouvelle boite à outils */
 
@@ -105,10 +108,14 @@ void startClient(int sock_id)
   char *commande = malloc(128);
   char *resultat = malloc(1024);
   char *filename = malloc(128);
+  char *filesize = malloc(128);
+  char *buffer = malloc(1024);
  
   memset(commande, 0, 128);
   memset(resultat, 0, 1024);
   memset(filename, 0, 128);
+  memset(filesize, 0, 128);
+  memset(buffer, 0, 1024);
 
   /* Demande et envoi de la difficulté (nombre de vie) */
   printf("\nBonjour, veuillez saisir votre commande : ");
@@ -118,11 +125,11 @@ void startClient(int sock_id)
   if(strcmp(commande,"ls") == 0) {
 
     //envoi de la commande
-    if (write(sock_id, commande, 128) < 0)
+    if (envoi(sock_id, commande, 128) < 0)
     {
-        printf("Echec de l'envoi de la commande \n");
+        printf("Echec de l'envoi de la commande \n"); exit(1);
     }
-    read(sock_id, resultat, 1024);
+    reception(sock_id, resultat, 1024);
     printf("%s\n", resultat);
     fflush(stdout);
 
@@ -130,24 +137,50 @@ void startClient(int sock_id)
     scanf("%s", filename); // filename = nom du fichier à récupérer depuis le serveur
     printf("%s\n", filename);
 
-    //envoi de la commande
-    if (write(sock_id, commande, 128) < 0)
+    //Ouverture du fichier à envoyer
+    FILE* f = fopen(filename, "r");
+    if(f == NULL){ printf("Erreur ouverture du fichier.\n"); exit(1);}
+
+    //envoi de la commande au serveur
+    if (envoi(sock_id, commande, 128) < 0)
     {
-        printf("Echec de l'envoi de la commande \n");
+        printf("Echec de l'envoi de la commande \n"); exit(1);
     }
 
-    //envoi du nom du fichier
-    if (write(sock_id,filename, 128) < 0)
+    //envoi du nom du fichier au serveur
+    if (envoi(sock_id, filename, 128) < 0)
     {
-        printf("Echec de l'envoi du nom du fichier \n");
+        printf("Echec de l'envoi du nom du fichier \n"); exit(1);
     }
+    fseek(f, 0L, SEEK_END);
+    long int fz = ftell(f);
+    printf("pls marche %ld\n", fz);
+    rewind(f);
+    sprintf(filesize, "%li", fz);
+
+    //envoi de la taille du fichier au serveur
+    if (envoi(sock_id, filesize, 128) < 0)
+    {
+        printf("Echec de l'envoi de la taille du fichier\n"); exit(1);
+    }
+
+    long int envoyes = 0;
+
+    while(envoyes < fz) {
+      fread(buffer, 1024, 1, f);
+      envoyes += envoi(sock_id, buffer, 1024);
+    }
+
+    printf("Fin de l'envoi\n");
+
+    fclose(f);
 
   }else if(strcmp(commande,"get") == 0) {
     printf("%s\n", commande);
   }else if(strcmp(commande,"quit") == 0) {
     printf("%s\n", commande);
   }else {
-    printf("Erreur, tapez ls ou put ou get ou quit.\n");
+    printf("Erreur, tapez ls ou put ou get ou quit.\n"); exit(1);
   }
 
   free(commande);
