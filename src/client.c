@@ -215,7 +215,7 @@ void startClient(int sock_id)
       if (strcmp(rep, "OK") == 0)
       {
         /* Creation du fichier */
-        FILE *f = fopen("testre.txt", "w+");
+        FILE *f = fopen(filename, "w+");
 
         /* Lecture de la taille du fichier à recevoir */
         reception(sock_id, filesize, 128);

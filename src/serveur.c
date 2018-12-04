@@ -140,7 +140,7 @@ void startServeur(int sock_cli)
       /* Lecture nom du fichier à recevoir */
       reception(sock_cli, filename, 128);
       /* Creation du fichier */
-      FILE *f = fopen("test1.txt", "w+");
+      FILE *f = fopen(filename, "w+");
 
       /* Lecture de la taille du fichier à recevoir */
       reception(sock_cli, filesize, 128);
